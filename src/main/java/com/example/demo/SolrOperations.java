@@ -14,11 +14,11 @@ import com.example.demo.beans.News;
 @Component
 public class SolrOperations {
 
-	@Value("${solrCoreUrl}")
-	private String SOLR_CORE_URL;
+	@Value("${solrcoreurl}")
+	public String solrcoreurl;
 
-	SolrClient solrClient = new HttpSolrClient.Builder(getSOLR_CORE_URL()).withConnectionTimeout(5000)
-			.withSocketTimeout(3000).build();
+	SolrClient solrClient = new HttpSolrClient.Builder("http://localhost:8983/solr/output_collection").withConnectionTimeout(5000).withSocketTimeout(3000)
+			.build();
 
 	public void indexingByUsingSolrInputDocument(News news) {
 		final SolrInputDocument doc = new SolrInputDocument();
@@ -34,14 +34,6 @@ public class SolrOperations {
 		} catch (SolrServerException | IOException e) {
 			System.err.printf("\nFailed to indexing articles: %s", e.getMessage());
 		}
-	}
-
-	public String getSOLR_CORE_URL() {
-		return SOLR_CORE_URL;
-	}
-
-	public void setSOLR_CORE_URL(String sOLR_CORE_URL) {
-		SOLR_CORE_URL = sOLR_CORE_URL;
 	}
 
 }

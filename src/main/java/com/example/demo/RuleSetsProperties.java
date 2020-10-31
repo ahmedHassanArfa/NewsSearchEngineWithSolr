@@ -8,7 +8,7 @@ import org.springframework.stereotype.Component;
 import com.example.demo.beans.RuleSet;
 
 @Component
-@ConfigurationProperties("rulesConfig")
+@ConfigurationProperties("rulesconfig")
 public class RuleSetsProperties {
 	
 	List<RuleSet> ruleSets;

@@ -1,10 +1,14 @@
 package com.example.demo;
 
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.ParameterizedTypeReference;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
@@ -14,8 +18,7 @@ import com.example.demo.beans.News;
 @Component
 public class ApiConsumer {
 
-	@Autowired
-	public RestTemplate restTemplate;
+	public RestTemplate restTemplate = new RestTemplate();
 	@Autowired
 	RulesConditionsCheck rulesConditionsCheck;
 
@@ -33,13 +36,20 @@ public class ApiConsumer {
 			params.put("_page", i+"");
 			params.put("_limit", pageSize+"");
 			
-			ResponseEntity<News[]> response = restTemplate.getForEntity(url,
-					News[].class, params);
-			News[] newsArr = response.getBody();
+//			ResponseEntity<List<News>> rateResponse =
+//			        restTemplate.exchange(url+ "?_page="+ 0+ "&_limit="+ 10,
+//			                    HttpMethod.GET, null, new ParameterizedTypeReference<List<News>>() {
+//								});
+//			List<News> rates = rateResponse.getBody();
+
+			
+			ResponseEntity<Object[]> response = restTemplate.getForEntity(url+ "?_page="+ 0+ "&_limit="+ 10,
+					Object[].class, params);
+			Object[] newsArr = response.getBody();
 			
 			
-			for(News news: newsArr) {
-				rulesConditionsCheck.check(news);
+			for(Object news: newsArr) {
+				rulesConditionsCheck.check((News) news);
 				
 			}
 			
