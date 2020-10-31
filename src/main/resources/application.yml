@@ -1,0 +1,26 @@
+api: 
+  url: http://mock.artiwise.com/api/news
+  count: 1000
+  pageSize: 100
+
+rulesConfig:
+  ruleSets:
+    - ruleset_Name: WHO Announcements
+      rules:
+        - rule_Name: Corona Virus WHO Announcements
+          keywords: Corona Virüs, Dünya Sağlık Örgütü, Duyuru
+          tags: news
+          categories: Sağlık, Yaşam
+          name: F5 HABER
+        - rule_Name: Corona Virus WHO Announcements
+          keywords: Corona Virüs, Dünya Sağlık Örgütü, Duyuru
+          tags: news
+          categories: Sağlık, Yaşam
+          name: F5 HABER
+    - ruleset_Name: WHO Announcements
+      rules:
+        - rule_Name: Corona Virus WHO Announcements
+          keywords: Corona Virüs, Dünya Sağlık Örgütü, Duyuru
+          tags: news
+          categories: Sağlık, Yaşam
+          name: F5 HABER
