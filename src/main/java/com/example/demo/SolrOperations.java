@@ -19,7 +19,7 @@ public class SolrOperations {
 	@Value("${solrcoreurl}")
 	public String solrcoreurl;
 
-	SolrClient solrClient = new HttpSolrClient.Builder("http://localhost:8983/solr/output_collection").withConnectionTimeout(5000).withSocketTimeout(3000)
+	SolrClient solrClient = new HttpSolrClient.Builder("http://localhost:8983/solr").withConnectionTimeout(5000).withSocketTimeout(3000)
 			.build();
 
 	public void indexingInputDocuments(List<Output> outputs) {
@@ -42,10 +42,12 @@ public class SolrOperations {
 			doc.addField("text", output.getType());
 			doc.addField("rules", output.getRules());
 			
+			docs.add(doc);
+			
 		}
 
 		try {
-			solrClient.add(docs);
+			solrClient.add("output_collection", docs);
 
 			solrClient.commit();
 

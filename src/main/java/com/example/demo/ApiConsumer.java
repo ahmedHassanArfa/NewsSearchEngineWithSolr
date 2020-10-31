@@ -32,7 +32,7 @@ public class ApiConsumer {
 			params.put("_page", i+"");
 			params.put("_limit", pageSize+"");
 
-			ResponseEntity<News[]> response = restTemplate.getForEntity(url+ "?_page="+ 0+ "&_limit="+ pageSize,
+			ResponseEntity<News[]> response = restTemplate.getForEntity(url+ "?_page="+ i+ "&_limit="+ pageSize,
 					News[].class, params);
 			News[] newsArr = response.getBody();
 			
