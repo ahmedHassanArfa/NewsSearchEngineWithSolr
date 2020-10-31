@@ -11,7 +11,15 @@ import com.example.demo.beans.RuleSet;
 @ConfigurationProperties("rulesconfig")
 public class RuleSetsProperties {
 	
-	List<RuleSet> ruleSets;
+	private List<RuleSet> ruleSets;
+
+	public List<RuleSet> getRuleSets() {
+		return ruleSets;
+	}
+
+	public void setRuleSets(List<RuleSet> ruleSets) {
+		this.ruleSets = ruleSets;
+	}
 	
 
 }
