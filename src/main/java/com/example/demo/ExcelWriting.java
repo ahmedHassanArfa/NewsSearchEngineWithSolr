@@ -12,24 +12,30 @@ import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
-import com.example.demo.beans.News;
+import com.example.demo.beans.Output;
 
 public class ExcelWriting {
 
-	public void writeToExcel(List<News> listNews) {
+	public static void writeToExcel(List<Output> outputs, String ruleSetName) {
 		// Blank workbook
+		@SuppressWarnings("resource")
 		XSSFWorkbook workbook = new XSSFWorkbook();
 
 		// Create a blank sheet
-		XSSFSheet sheet = workbook.createSheet("ruleSheet Name");
+		XSSFSheet sheet = workbook.createSheet(ruleSetName);
 
 		// This data needs to be written (Object[])
 		Map<String, Object[]> data = new TreeMap<String, Object[]>();
-		data.put("1", new Object[] { "ID", "NAME", "LASTNAME" });
-		data.put("2", new Object[] { 1, "Amit", "Shukla" });
-		data.put("3", new Object[] { 2, "Lokesh", "Gupta" });
-		data.put("4", new Object[] { 3, "John", "Adwards" });
-		data.put("5", new Object[] { 4, "Brian", "Schultz" });
+		data.put("1", new Object[] { "ID", "URL", "NAME", "Lang", "TYPE", "TAGS", "CATEGORIES",
+				"title", "Descrition", "content", "crawl_date", "modified_date", "published_date",
+				"text", "rules"});
+		for(Output output : outputs) {
+			data.put(output.getId(), new Object[] { output.getId(), output.getUrl(), output.getName(),
+					output.getLang(), output.getLang(), output.getType(), output.getTags(),
+					output.getCategories(), output.getTitle(), output.getDescription(), output.getContent(),
+					output.getCrawl_date(), output.getModified_date(), output.getPublished_date(),
+					output.getText(), output.getRules()});
+		}
 
 		// Iterate over data and write to sheet
 		Set<String> keyset = data.keySet();

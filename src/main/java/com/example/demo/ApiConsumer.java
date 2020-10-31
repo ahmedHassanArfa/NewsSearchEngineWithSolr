@@ -1,14 +1,10 @@
 package com.example.demo;
 
-import java.util.Arrays;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.core.ParameterizedTypeReference;
-import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
@@ -40,14 +36,10 @@ public class ApiConsumer {
 					News[].class, params);
 			News[] newsArr = response.getBody();
 			
-			
-			for(News news: newsArr) {
-				rulesConditionsCheck.check(news);
-				
-			}
+			rulesConditionsCheck.check(newsArr);
 			
 			
-		}
+		}	
 
 	}
 
