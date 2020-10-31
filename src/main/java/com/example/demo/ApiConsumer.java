@@ -35,21 +35,14 @@ public class ApiConsumer {
 			Map<String, String> params = new HashMap<String, String>();
 			params.put("_page", i+"");
 			params.put("_limit", pageSize+"");
-			
-//			ResponseEntity<List<News>> rateResponse =
-//			        restTemplate.exchange(url+ "?_page="+ 0+ "&_limit="+ 10,
-//			                    HttpMethod.GET, null, new ParameterizedTypeReference<List<News>>() {
-//								});
-//			List<News> rates = rateResponse.getBody();
 
+			ResponseEntity<News[]> response = restTemplate.getForEntity(url+ "?_page="+ 0+ "&_limit="+ 10,
+					News[].class, params);
+			News[] newsArr = response.getBody();
 			
-			ResponseEntity<Object[]> response = restTemplate.getForEntity(url+ "?_page="+ 0+ "&_limit="+ 10,
-					Object[].class, params);
-			Object[] newsArr = response.getBody();
 			
-			
-			for(Object news: newsArr) {
-				rulesConditionsCheck.check((News) news);
+			for(News news: newsArr) {
+				rulesConditionsCheck.check(news);
 				
 			}
 			
