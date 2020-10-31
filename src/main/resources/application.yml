@@ -1,3 +1,4 @@
+solrCoreUrl: http://localhost:8983/solr/output_collection
 api: 
   url: http://mock.artiwise.com/api/news
   count: 1000

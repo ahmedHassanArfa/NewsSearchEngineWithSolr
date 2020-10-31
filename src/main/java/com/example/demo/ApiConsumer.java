@@ -39,8 +39,7 @@ public class ApiConsumer {
 			
 			
 			for(News news: newsArr) {
-				// (making lowercase, trimming redundant spaces,
-				// removing punctuations, and removing stopwords by language)
+				rulesConditionsCheck.check(news);
 				
 			}
 			
