@@ -4,10 +4,12 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.example.demo.ahoCorasickAlgorithm.StringSearchUsingAhoCorasickAlgo;
 import com.example.demo.beans.News;
 import com.example.demo.beans.Output;
 import com.example.demo.beans.Rule;
@@ -22,48 +24,120 @@ public class RulesConditionsCheck {
 	@Autowired
 	SolrOperations solrOperations;
 
-	public boolean check(News[] newsArray) {
-
-		// (making lowercase, trimming redundant spaces,
-		// removing punctuations, and removing stopwords by language)
-
+	public void check(News[] newsArray) {
 		Map<String, List<Output>> map = new HashMap<String, List<Output>>();
-		List<Output> outputs = new ArrayList<Output>();
 		for (News news : newsArray) {
-ruleSetLoop:for (RuleSet ruleSet : ruleSetsProperties.getRuleSets()) {
-				
-				// every ruleset has it's excel sheets
+			Output output = mapNewsToOutput(news);
+			// first check this text for keyword with aho-corasick for all ruleset at first
+			
+			
+			ruleSetLoop: for (RuleSet ruleSet : ruleSetsProperties.getRuleSets()) {
+				if (map.get(ruleSet.getRuleset_Name()) == null) {
+					map.put(ruleSet.getRuleset_Name(), new ArrayList<Output>());
+				}
+				boolean passCategory = false;
+				boolean passTags = false;
+				boolean passLang = false;
+				boolean passName = false;
+				boolean passKeywords = false;
 				for (Rule rule : ruleSet.getRules()) {
 					// if one rule success this document is accepted
-					
-					// if success then
-					Output output = mapNewsToOutput(news);
-					outputs.add(output);
-					map.put(ruleSet.getRuleset_Name(), outputs);
-					break ruleSetLoop;
-					
-				}
+					if (rule.getCategories() != null) {
+						if (rule.getCategories().contains(",")) {
+							String[] categArr = rule.getCategories().split(",");
+							categLoop: for (String categ : categArr) {
+								if (news.getCategories().contains(categ)) {
+									passCategory = true;
+									break categLoop;
+								}
+							}
+						} else {
+							if (news.getCategories().contains(rule.getCategories())) {
+								passCategory = true;
+							}
+						}
+					} else {
+						passCategory = true;
+					}
 
+					if (rule.getTags() != null) {
+						if (rule.getTags().contains(",")) {
+							String[] tagsArr = rule.getTags().split(",");
+							tagLoop: for (String tag : tagsArr) {
+								if (news.getTags().contains(tag)) {
+									passTags = true;
+									break tagLoop;
+								}
+							}
+						} else {
+							if (news.getTags().contains(rule.getTags())) {
+								passTags = true;
+							}
+						}
+					}
+
+					if (rule.getLang() != null) {
+						if (rule.getLang().contains(",")) {
+							String[] langArr = rule.getLang().split(",");
+							langLoop: for (String lang : langArr) {
+								if (news.getLang().equals(lang)) {
+									passLang = true;
+									break langLoop;
+								}
+							}
+						} else {
+							if (news.getLang().equals(rule.getTags())) {
+								passTags = true;
+							}
+						}
+					}
+
+					if (rule.getName() != null) {
+						if (rule.getName().contains(",")) {
+							String[] nameArr = rule.getName().split(",");
+							nameLoop: for (String name : nameArr) {
+								if (news.getName().equals(name)) {
+									passName = true;
+									break nameLoop;
+								}
+							}
+						} else {
+							if (news.getName().equals(rule.getName())) {
+								passName = true;
+							}
+						}
+					}
+					
+					// check keywords
+					StringSearchUsingAhoCorasickAlgo ahoCorasick = new StringSearchUsingAhoCorasickAlgo(
+			                1000);
+					ahoCorasick.addString(rule.getKeywords().replace(",", " "));
+					int node = 0;
+					for (char ch : output.getText().toCharArray())
+			        {
+			            node = ahoCorasick.transition(node, ch);
+			        }
+			        if (ahoCorasick.nodes[node].leaf) {
+			        	passKeywords = true;
+			        }
+
+					if (passCategory && passLang && passName && passTags && passKeywords) {
+						// if success then
+						map.get(ruleSet.getRuleset_Name()).add(output);
+						break ruleSetLoop;
+					}
+
+				}
 
 			}
 		}
-		
-		// save in solr and excel file
-		solrOperations.indexingInputDocuments(outputs);
-		ExcelWriting.writeToExcel(outputs, "sfsgfs");
 
-		int node = 0;
-//        for (char ch : main.toCharArray())
-//        {
-//            node = ahoCorasick.transition(node, ch);
-//        }
-//        if (ahoCorasick.nodes[node].leaf)
-//            System.out.println("A '" + pattern + "' string is substring of "
-//                    + main + " string.");
-//        else
-//            System.out.println("A '" + pattern
-//                    + "' string is not substring of " + main + " string.");
-		return false;
+		for (Entry<String, List<Output>> entry : map.entrySet()) {
+			// save in solr and excel file
+			solrOperations.indexingInputDocuments(entry.getValue());
+			// every ruleset has it's excel sheets
+			ExcelWriting.writeToExcel(entry.getValue(), entry.getKey());
+		}
 	}
 
 	public static Output mapNewsToOutput(News news) {
@@ -80,9 +154,12 @@ ruleSetLoop:for (RuleSet ruleSet : ruleSetsProperties.getRuleSets()) {
 		output.setRules(new ArrayList<String>());
 		output.setCategories(news.getCategories());
 		output.setTags(news.getTags());
-		output.setText(news.getContent());
 		output.setTitle(news.getTitle());
 		output.setType(news.getType());
+
+		// (making lowercase, trimming redundant spaces,
+		// removing punctuations, and removing stopwords by language)
+		output.setText(Utils.normalizeTurkishText(news.getTitle() + news.getDescription() + news.getContent()));
 		return output;
 	}
 

@@ -18,6 +18,7 @@ rulesconfig:
           tags: news
           categories: Sağlık, Yaşam
           name: F5 HABER
+          lang: tr
     - ruleset_Name: WHO Announcements
       rules:
         - rule_Name: Corona Virus WHO Announcements

@@ -6,7 +6,7 @@ import java.util.Scanner;
 public class StringSearchUsingAhoCorasickAlgo
 {
     static final int ALPHABET_SIZE = 26;
-    Node[]           nodes;
+    public Node[]           nodes;
     int              nodeCount;
  
     public static class Node
@@ -16,7 +16,7 @@ public class StringSearchUsingAhoCorasickAlgo
         int     suffLink    = -1;
         int[]   children    = new int[ALPHABET_SIZE];
         int[]   transitions = new int[ALPHABET_SIZE];
-        boolean leaf;
+        public boolean leaf;
         {
             Arrays.fill(children, -1);
             Arrays.fill(transitions, -1);

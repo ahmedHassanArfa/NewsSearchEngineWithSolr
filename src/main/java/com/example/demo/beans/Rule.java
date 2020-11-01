@@ -7,6 +7,7 @@ public class Rule {
 	private String tags;
 	private String categories;
 	private String name;
+	private String lang;
 
 	public String getRule_Name() {
 		return rule_Name;
@@ -46,6 +47,14 @@ public class Rule {
 
 	public void setName(String name) {
 		this.name = name;
+	}
+
+	public String getLang() {
+		return lang;
+	}
+
+	public void setLang(String lang) {
+		this.lang = lang;
 	}
 
 }
