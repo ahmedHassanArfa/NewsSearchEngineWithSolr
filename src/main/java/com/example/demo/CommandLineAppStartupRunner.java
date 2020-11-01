@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
 
+import com.example.demo.ahoCorasickAlgorithm.AhoCorasick;
 import com.example.demo.beans.Rule;
 import com.example.demo.beans.RuleSet;
 
@@ -21,24 +22,17 @@ public class CommandLineAppStartupRunner implements CommandLineRunner {
 		// build tree for AhoCoraSick for all ruleSets to check at first it it found
 		// here or not
 		// to reduce the time complexity
+		AhoCorasick ahoCorasick = new AhoCorasick(1000);
 		for (RuleSet ruleSet : ruleSetsProperties.getRuleSets()) {
 			for (Rule rule : ruleSet.getRules()) {
-//				String pattern = sc.nextLine().toLowerCase().trim();
-//		        ahoCorasick.addString(pattern);
-//		        int node = 0;
-//		        for (char ch : main.toCharArray())
-//		        {
-//		            node = ahoCorasick.transition(node, ch);
-//		        }
-//		        if (ahoCorasick.nodes[node].leaf)
-//		            System.out.println("A '" + pattern + "' string is substring of "
-//		                    + main + " string.");
-//		        else
-//		            System.out.println("A '" + pattern
-//		                    + "' string is not substring of " + main + " string.");ed
+				String[] keywords = rule.getKeywords().split(",");
+				for(String keyword : keywords) {
+					keyword = Utils.clearTurkishChars(keyword);
+					ahoCorasick.addString(keyword.replace(" ", "").toLowerCase());
+				}
 			}
 		}
-		apiConsumer.retrieveNewsFromApi();
+		apiConsumer.retrieveNewsFromApi(ahoCorasick);
 	}
 
 }

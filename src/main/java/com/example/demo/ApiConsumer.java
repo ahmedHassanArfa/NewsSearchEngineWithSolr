@@ -9,6 +9,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 
+import com.example.demo.ahoCorasickAlgorithm.AhoCorasick;
 import com.example.demo.beans.News;
 
 @Component
@@ -25,7 +26,7 @@ public class ApiConsumer {
 	@Value("${api.pageSize}")
 	public int pageSize;
 
-	public void retrieveNewsFromApi() {
+	public void retrieveNewsFromApi(AhoCorasick ahoCorasick) {
 		RestTemplate restTemplate = new RestTemplate();
 		for(int i=0; i < count/pageSize; i++) {
 			Map<String, String> params = new HashMap<String, String>();
@@ -36,7 +37,7 @@ public class ApiConsumer {
 					News[].class, params);
 			News[] newsArr = response.getBody();
 			
-			rulesConditionsCheck.check(newsArr);
+			rulesConditionsCheck.check(newsArr, ahoCorasick);
 			
 			
 		}	

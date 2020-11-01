@@ -19,12 +19,17 @@ import com.example.demo.beans.Output;
 
 public class ExcelWriting {
 
+	@SuppressWarnings("resource")
 	public static void writeToExcel(List<Output> outputs, String ruleSetName) {
 		try {
-			FileInputStream file = new FileInputStream(new File("output.xlsx"));
-			// Blank workbook
-			@SuppressWarnings("resource")
-			XSSFWorkbook workbook = new XSSFWorkbook(file);
+			XSSFWorkbook workbook;
+			if (new File("output.xlsx").exists()) {
+				FileInputStream file = new FileInputStream(new File("output.xlsx"));
+				// Blank workbook
+				workbook = new XSSFWorkbook(file);
+			} else {
+				workbook = new XSSFWorkbook();
+			}
 
 			// Create a blank sheet
 			XSSFSheet sheet;

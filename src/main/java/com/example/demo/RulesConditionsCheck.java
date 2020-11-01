@@ -9,7 +9,7 @@ import java.util.Map.Entry;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.example.demo.ahoCorasickAlgorithm.StringSearchUsingAhoCorasickAlgo;
+import com.example.demo.ahoCorasickAlgorithm.AhoCorasick;
 import com.example.demo.beans.News;
 import com.example.demo.beans.Output;
 import com.example.demo.beans.Rule;
@@ -24,11 +24,20 @@ public class RulesConditionsCheck {
 	@Autowired
 	SolrOperations solrOperations;
 
-	public void check(News[] newsArray) {
+	public void check(News[] newsArray, AhoCorasick ahoCorasick) {
 		Map<String, List<Output>> map = new HashMap<String, List<Output>>();
 		for (News news : newsArray) {
 			Output output = mapNewsToOutput(news);
 			// first check this text for keyword with aho-corasick for all ruleset at first
+			int node = 0;
+			String outputENChar = Utils.clearTurkishChars(output.getText().replace(" ", "").toLowerCase());
+			for (char ch : outputENChar.toCharArray())
+	        {
+	            node = ahoCorasick.transition(node, ch);
+	        }
+	        if (!ahoCorasick.nodes[node].leaf) {
+	        	continue;
+	        }
 			
 			
 			ruleSetLoop: for (RuleSet ruleSet : ruleSetsProperties.getRuleSets()) {
@@ -109,17 +118,23 @@ public class RulesConditionsCheck {
 					}
 					
 					// check keywords
-					StringSearchUsingAhoCorasickAlgo ahoCorasick = new StringSearchUsingAhoCorasickAlgo(
-			                1000);
-					ahoCorasick.addString(rule.getKeywords().replace(",", " "));
-					int node = 0;
-					for (char ch : output.getText().toCharArray())
-			        {
-			            node = ahoCorasick.transition(node, ch);
-			        }
-			        if (ahoCorasick.nodes[node].leaf) {
-			        	passKeywords = true;
-			        }
+					AhoCorasick ahoCorasickForRule = new AhoCorasick(1000);
+					String[] keywords = rule.getKeywords().split(",");
+					for(String keyword : keywords) {
+						keyword = Utils.clearTurkishChars(keyword);
+						ahoCorasickForRule.addString(keyword.replace(" ", "").toLowerCase());
+						int nodeRule = 0;
+						String outputENCharRule = Utils.clearTurkishChars(output.getText().replace(" ", "").toLowerCase());
+						for (char ch : outputENCharRule.toCharArray())
+				        {
+							nodeRule = ahoCorasickForRule.transition(nodeRule, ch);
+				        }
+				        if (!ahoCorasickForRule.nodes[node].leaf) {
+				        	passKeywords = false;
+				        	break;
+				        }
+					}
+					
 
 					if (passCategory && passLang && passName && passTags && passKeywords) {
 						// if success then

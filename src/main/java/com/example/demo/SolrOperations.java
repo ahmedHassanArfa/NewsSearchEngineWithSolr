@@ -19,7 +19,7 @@ public class SolrOperations {
 	@Value("${solrcoreurl}")
 	public String solrcoreurl;
 
-	SolrClient solrClient = new HttpSolrClient.Builder("http://localhost:8983/solr").withConnectionTimeout(5000).withSocketTimeout(3000)
+	SolrClient solrClient = new HttpSolrClient.Builder("http://localhost:8983/solr/").withConnectionTimeout(5000).withSocketTimeout(3000)
 			.build();
 
 	public void indexingInputDocuments(List<Output> outputs) {
@@ -49,7 +49,7 @@ public class SolrOperations {
 		try {
 			solrClient.add("output_collection", docs);
 
-			solrClient.commit();
+			solrClient.commit("output_collection");
 
 		} catch (SolrServerException | IOException e) {
 			System.err.printf("\nFailed to indexing articles: %s", e.getMessage());
