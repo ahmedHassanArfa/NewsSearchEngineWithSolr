@@ -47,8 +47,8 @@ public class SolrOperations {
 		}
 
 		try {
+			if(!docs.isEmpty())
 			solrClient.add("output_collection", docs);
-
 			solrClient.commit("output_collection");
 
 		} catch (SolrServerException | IOException e) {

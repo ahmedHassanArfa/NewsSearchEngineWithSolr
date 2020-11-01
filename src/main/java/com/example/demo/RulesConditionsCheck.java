@@ -26,20 +26,23 @@ public class RulesConditionsCheck {
 
 	public void check(News[] newsArray, AhoCorasick ahoCorasick) {
 		Map<String, List<Output>> map = new HashMap<String, List<Output>>();
-		for (News news : newsArray) {
+		newsLoop: for (News news : newsArray) {
 			Output output = mapNewsToOutput(news);
 			// first check this text for keyword with aho-corasick for all ruleset at first
 			int node = 0;
 			String outputENChar = Utils.clearTurkishChars(output.getText()).replace(" ", "").toLowerCase();
-			for (char ch : outputENChar.toCharArray())
-	        {
-	            node = ahoCorasick.transition(node, ch);
-	            if (!ahoCorasick.nodes[node].leaf) {
-		        	continue;
-		        }
-	        }
-			
-			
+			boolean found = false;
+			for (char ch : outputENChar.toCharArray()) {
+				node = ahoCorasick.transition(node, ch);
+				if (ahoCorasick.nodes[node].leaf) {
+					found = true;
+					break;
+				}
+			}
+			if(!found) {
+				continue newsLoop;
+			}
+
 			ruleSetLoop: for (RuleSet ruleSet : ruleSetsProperties.getRuleSets()) {
 				if (map.get(ruleSet.getRuleset_Name()) == null) {
 					map.put(ruleSet.getRuleset_Name(), new ArrayList<Output>());
@@ -49,21 +52,25 @@ public class RulesConditionsCheck {
 				boolean passLang = false;
 				boolean passName = false;
 				boolean passType = false;
-				boolean passKeywords = false;
+				boolean passKeywords = true;
 				for (Rule rule : ruleSet.getRules()) {
 					// if one rule success this document is accepted
 					if (rule.getCategories() != null) {
 						if (rule.getCategories().contains(",")) {
 							String[] categArr = rule.getCategories().split(",");
 							categLoop: for (String categ : categArr) {
-								if (news.getCategories().contains(categ)) {
-									passCategory = true;
-									break categLoop;
+								for (String c : news.getCategories()) {
+									if (c.equals(categ)) {
+										passCategory = true;
+										break categLoop;
+									}
 								}
 							}
 						} else {
-							if (news.getCategories().contains(rule.getCategories())) {
-								passCategory = true;
+							for (String c : news.getCategories()) {
+								if (c.equals(rule.getCategories())) {
+									passCategory = true;
+								}
 							}
 						}
 					} else {
@@ -74,14 +81,18 @@ public class RulesConditionsCheck {
 						if (rule.getTags().contains(",")) {
 							String[] tagsArr = rule.getTags().split(",");
 							tagLoop: for (String tag : tagsArr) {
-								if (news.getTags().contains(tag)) {
-									passTags = true;
-									break tagLoop;
+								for(String t : news.getTags()) {
+									if (t.equals(tag)) {
+										passTags = true;
+										break tagLoop;
+									}
 								}
 							}
 						} else {
-							if (news.getTags().contains(rule.getTags())) {
-								passTags = true;
+							for(String t : news.getTags()) {
+								if (t.equals(rule.getTags())) {
+									passTags = true;
+								}
 							}
 						}
 					}
@@ -96,8 +107,8 @@ public class RulesConditionsCheck {
 								}
 							}
 						} else {
-							if (news.getLang().equals(rule.getTags())) {
-								passTags = true;
+							if (news.getLang().equals(rule.getLang())) {
+								passLang = true;
 							}
 						}
 					}
@@ -117,7 +128,7 @@ public class RulesConditionsCheck {
 							}
 						}
 					}
-					
+
 					if (rule.getType() != null) {
 						if (rule.getType().contains(",")) {
 							String[] typeArr = rule.getType().split(",");
@@ -133,25 +144,36 @@ public class RulesConditionsCheck {
 							}
 						}
 					}
-					
+
 					// check keywords
 					AhoCorasick ahoCorasickForRule = new AhoCorasick(1000);
-					String[] keywords = rule.getKeywords().split(",");
-					for(String keyword : keywords) {
-						keyword = Utils.clearTurkishChars(keyword);
-						ahoCorasickForRule.addString(keyword.replace(" ", "").toLowerCase());
-						int nodeRule = 0;
-						String outputENCharRule = Utils.clearTurkishChars(output.getText()).replace(" ", "").toLowerCase();
-						for (char ch : outputENCharRule.toCharArray())
-				        {
-							nodeRule = ahoCorasickForRule.transition(nodeRule, ch);
-							if (!ahoCorasickForRule.nodes[nodeRule].leaf) {
-					        	passKeywords = false;
-					        	break;
-					        }
-				        }
+					passKeywords = true;
+					String[] keywords;
+					if(rule.getKeywords().contains(",")) {
+						keywords = rule.getKeywords().split(",");
+					} else {
+						keywords = new String[]{rule.getKeywords()};
 					}
-					
+					for (String keyword : keywords) {
+						boolean keywordFound = false;
+						keyword = Utils.clearTurkishChars(keyword);
+						keyword = keyword.replace(" ", "").toLowerCase();
+						ahoCorasickForRule.addString(keyword);
+						int nodeRule = 0;
+						String outputENCharRule = Utils.clearTurkishChars(output.getText()).replace(" ", "")
+								.toLowerCase();
+						for (char ch : outputENCharRule.toCharArray()) {
+							nodeRule = ahoCorasickForRule.transition(nodeRule, ch);
+							if (ahoCorasickForRule.nodes[nodeRule].leaf) {
+								keywordFound = true;
+								break;
+							}
+						}
+						if(!keywordFound) {
+							passKeywords = false;
+							break;
+						}
+					}
 
 					if (passCategory && passLang && passName && passTags && passType && passKeywords) {
 						// if success then
