@@ -30,13 +30,13 @@ public class RulesConditionsCheck {
 			Output output = mapNewsToOutput(news);
 			// first check this text for keyword with aho-corasick for all ruleset at first
 			int node = 0;
-			String outputENChar = Utils.clearTurkishChars(output.getText().replace(" ", "").toLowerCase());
+			String outputENChar = Utils.clearTurkishChars(output.getText()).replace(" ", "").toLowerCase();
 			for (char ch : outputENChar.toCharArray())
 	        {
 	            node = ahoCorasick.transition(node, ch);
-	        }
-	        if (!ahoCorasick.nodes[node].leaf) {
-	        	continue;
+	            if (!ahoCorasick.nodes[node].leaf) {
+		        	continue;
+		        }
 	        }
 			
 			
@@ -48,6 +48,7 @@ public class RulesConditionsCheck {
 				boolean passTags = false;
 				boolean passLang = false;
 				boolean passName = false;
+				boolean passType = false;
 				boolean passKeywords = false;
 				for (Rule rule : ruleSet.getRules()) {
 					// if one rule success this document is accepted
@@ -117,6 +118,22 @@ public class RulesConditionsCheck {
 						}
 					}
 					
+					if (rule.getType() != null) {
+						if (rule.getType().contains(",")) {
+							String[] typeArr = rule.getType().split(",");
+							typeLoop: for (String type : typeArr) {
+								if (news.getType().equals(type)) {
+									passType = true;
+									break typeLoop;
+								}
+							}
+						} else {
+							if (news.getType().equals(rule.getType())) {
+								passType = true;
+							}
+						}
+					}
+					
 					// check keywords
 					AhoCorasick ahoCorasickForRule = new AhoCorasick(1000);
 					String[] keywords = rule.getKeywords().split(",");
@@ -124,19 +141,19 @@ public class RulesConditionsCheck {
 						keyword = Utils.clearTurkishChars(keyword);
 						ahoCorasickForRule.addString(keyword.replace(" ", "").toLowerCase());
 						int nodeRule = 0;
-						String outputENCharRule = Utils.clearTurkishChars(output.getText().replace(" ", "").toLowerCase());
+						String outputENCharRule = Utils.clearTurkishChars(output.getText()).replace(" ", "").toLowerCase();
 						for (char ch : outputENCharRule.toCharArray())
 				        {
 							nodeRule = ahoCorasickForRule.transition(nodeRule, ch);
-				        }
-				        if (!ahoCorasickForRule.nodes[node].leaf) {
-				        	passKeywords = false;
-				        	break;
+							if (!ahoCorasickForRule.nodes[nodeRule].leaf) {
+					        	passKeywords = false;
+					        	break;
+					        }
 				        }
 					}
 					
 
-					if (passCategory && passLang && passName && passTags && passKeywords) {
+					if (passCategory && passLang && passName && passTags && passType && passKeywords) {
 						// if success then
 						map.get(ruleSet.getRuleset_Name()).add(output);
 						break ruleSetLoop;
@@ -174,7 +191,9 @@ public class RulesConditionsCheck {
 
 		// (making lowercase, trimming redundant spaces,
 		// removing punctuations, and removing stopwords by language)
-		output.setText(Utils.normalizeTurkishText(news.getTitle() + news.getDescription() + news.getContent()));
+		String text = news.getTitle() + news.getDescription() + news.getContent();
+		text = Utils.clearTurkishChars(text);
+		output.setText(Utils.normalizeTurkishText(text));
 		return output;
 	}
 

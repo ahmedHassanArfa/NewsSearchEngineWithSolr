@@ -27,8 +27,8 @@ public class CommandLineAppStartupRunner implements CommandLineRunner {
 			for (Rule rule : ruleSet.getRules()) {
 				String[] keywords = rule.getKeywords().split(",");
 				for(String keyword : keywords) {
-					keyword = Utils.clearTurkishChars(keyword);
-					ahoCorasick.addString(keyword.replace(" ", "").toLowerCase());
+					keyword = Utils.clearTurkishChars(keyword).replace(" ", "").toLowerCase();
+					ahoCorasick.addString(keyword);
 				}
 			}
 		}

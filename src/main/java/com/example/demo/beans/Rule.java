@@ -8,6 +8,7 @@ public class Rule {
 	private String categories;
 	private String name;
 	private String lang;
+	private String type;
 
 	public String getRule_Name() {
 		return rule_Name;
@@ -55,6 +56,14 @@ public class Rule {
 
 	public void setLang(String lang) {
 		this.lang = lang;
+	}
+
+	public String getType() {
+		return type;
+	}
+
+	public void setType(String type) {
+		this.type = type;
 	}
 
 }
