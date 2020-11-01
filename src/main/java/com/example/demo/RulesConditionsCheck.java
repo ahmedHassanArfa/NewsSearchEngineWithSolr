@@ -1,6 +1,7 @@
 package com.example.demo;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -180,6 +181,7 @@ public class RulesConditionsCheck {
 							break;
 						}
 					}
+					output.getRules().addAll(Arrays.asList(keywords));
 
 					if (passCategory && passLang && passName && passTags && passType && passKeywords) {
 						// if success then

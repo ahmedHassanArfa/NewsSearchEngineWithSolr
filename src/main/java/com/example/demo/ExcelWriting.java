@@ -51,8 +51,8 @@ public class ExcelWriting {
 				data.put(i+ "", new Object[] { output.getId(), output.getUrl(), output.getName(),
 						output.getLang(), output.getLang(), output.getType(), output.getTags().toString(),
 						output.getCategories().toString(), output.getTitle(), output.getDescription(),
-						output.getContent().length() > 32767 ? output.getContent().substring(0, 32767): output.getContent(), output.getCrawl_date().toString(), output.getModified_date().toString(),
-						output.getPublished_date().toString(), output.getText().length() > 32767 ? output.getText().substring(0, 32767): output.getText(), output.getRules().toString() });
+						output.getContent().length() > 32767 ? output.getContent().substring(0, 3276700): output.getContent(), output.getCrawl_date().toString(), output.getModified_date().toString(),
+						output.getPublished_date().toString(), output.getText().length() > 3276700 ? output.getText().substring(0, 32767): output.getText(), output.getRules().toString() });
 				i++;
 			}
 

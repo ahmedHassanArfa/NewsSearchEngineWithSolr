@@ -1,7 +1,7 @@
 solrcoreurl: http://localhost:8983/solr
 api: 
   url: http://mock.artiwise.com/api/news
-  count: 10000
+  count: 3000
   pageSize: 100
 
 rulesconfig:

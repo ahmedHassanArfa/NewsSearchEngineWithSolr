@@ -1107,6 +1107,19 @@
     </lst>
   </updateProcessor>
 
+  <updateRequestProcessorChain name="script">
+    <processor class="solr.StatelessScriptUpdateProcessorFactory">
+    <str name="script">update-script.js</str>
+    </processor>
+<!-- optional parameters passed to script
+<lst name="params">
+<str name="config_param">example config parameter</str>
+</lst>
+-->
+    <processor class="solr.LogUpdateProcessorFactory" />
+    <processor class="solr.RunUpdateProcessorFactory" />
+  </updateRequestProcessorChain>
+
   <!-- The update.autoCreateFields property can be turned to false to disable schemaless mode -->
   <updateRequestProcessorChain name="add-unknown-fields-to-the-schema" default="${update.autoCreateFields:true}"
            processor="uuid,remove-blank,field-name-mutating,parse-boolean,parse-long,parse-double,parse-date,add-schema-fields">
