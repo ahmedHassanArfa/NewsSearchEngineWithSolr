@@ -35,7 +35,7 @@ public class ExcelWriting {
 			
 			// Create a blank sheet
 			XSSFSheet sheet;
-			int rowNum;
+			int rowNum = 0;
 			if (workbook.getSheet(ruleSetName) != null) {
 				sheet = workbook.getSheet(ruleSetName);
 				rowNum = sheet.getLastRowNum() + 1;
@@ -43,24 +43,23 @@ public class ExcelWriting {
 				sheet = workbook.createSheet(ruleSetName);
 				data.put("1", new Object[] { "ID", "URL", "NAME", "Lang", "TYPE", "TAGS", "CATEGORIES", "title",
 						"Descrition", "content", "crawl_date", "modified_date", "published_date", "text", "rules" });
-				rowNum = 2;
 			}
 
 			// This data needs to be written (Object[]) 
+			int i = 2;
 			for (Output output : outputs) {
-				data.put(rowNum+ "", new Object[] { output.getId(), output.getUrl(), output.getName(),
+				data.put(i+ "", new Object[] { output.getId(), output.getUrl(), output.getName(),
 						output.getLang(), output.getLang(), output.getType(), output.getTags().toString(),
 						output.getCategories().toString(), output.getTitle(), output.getDescription(),
-						output.getContent(), output.getCrawl_date().toString(), output.getModified_date().toString(),
-						output.getPublished_date().toString(), output.getText(), output.getRules().toString() });
-				rowNum++;
+						output.getContent().length() > 32767 ? output.getContent().substring(0, 32767): output.getContent(), output.getCrawl_date().toString(), output.getModified_date().toString(),
+						output.getPublished_date().toString(), output.getText().length() > 32767 ? output.getText().substring(0, 32767): output.getText(), output.getRules().toString() });
+				i++;
 			}
 
 			// Iterate over data and write to sheet
 			Set<String> keyset = data.keySet();
-			int rownum = 0;
 			for (String key : keyset) {
-				Row row = sheet.createRow(rownum++);
+				Row row = sheet.createRow(rowNum++);
 				Object[] objArr = data.get(key);
 				int cellnum = 0;
 				for (Object obj : objArr) {

@@ -56,6 +56,9 @@ public class RulesConditionsCheck {
 				for (Rule rule : ruleSet.getRules()) {
 					// if one rule success this document is accepted
 					if (rule.getCategories() != null) {
+						if(news.getCategories() == null) {
+							continue;
+						}
 						if (rule.getCategories().contains(",")) {
 							String[] categArr = rule.getCategories().split(",");
 							categLoop: for (String categ : categArr) {
@@ -78,6 +81,9 @@ public class RulesConditionsCheck {
 					}
 
 					if (rule.getTags() != null) {
+						if(news.getTags() == null) {
+							continue;
+						}
 						if (rule.getTags().contains(",")) {
 							String[] tagsArr = rule.getTags().split(",");
 							tagLoop: for (String tag : tagsArr) {
