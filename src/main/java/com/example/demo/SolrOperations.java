@@ -39,7 +39,7 @@ public class SolrOperations {
 			doc.addField("crawl_date", output.getCrawl_date());
 			doc.addField("modified_date", output.getModified_date());
 			doc.addField("published_date", output.getPublished_date());
-			doc.addField("text", output.getType());
+			doc.addField("text", output.getText());
 			doc.addField("rules", output.getRules());
 			
 			docs.add(doc);

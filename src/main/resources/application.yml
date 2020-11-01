@@ -1,7 +1,7 @@
 solrcoreurl: http://localhost:8983/solr
 api: 
   url: http://mock.artiwise.com/api/news
-  count: 1000
+  count: 10000
   pageSize: 100
 
 rulesconfig:
@@ -9,14 +9,16 @@ rulesconfig:
     - ruleset_Name: WHO Announcements
       rules:
         - rule_Name: Corona Virus WHO Announcements
-          keywords: Corona Virüs, Dünya Sağlık Örgütü, Duyuru
+          keywords: Van İl,Bursa Sancak,SAĞLIK MÜDÜRÜ DOÇ
           tags: news
-          categories: Sağlık, Yaşam
-          name: F5 HABER
+          categories: Sağlık,Yaşam
+          name: BURSA SANCAK
+          lang: tr
+          type: Regional
         - rule_Name: Corona Virus WHO Announcements
-          keywords: Corona Virüs, Dünya Sağlık Örgütü, Duyuru
+          keywords: Corona Virüs,Dünya Sağlık Örgütü, Duyuru
           tags: news
-          categories: Sağlık, Yaşam
+          categories: Sağlık,Yaşam
           name: F5 HABER
           lang: tr
     - ruleset_Name: WHO Announcements

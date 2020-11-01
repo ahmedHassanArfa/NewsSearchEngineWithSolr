@@ -31,24 +31,29 @@ public class ExcelWriting {
 				workbook = new XSSFWorkbook();
 			}
 
+			Map<String, Object[]> data = new TreeMap<String, Object[]>();
+			
 			// Create a blank sheet
 			XSSFSheet sheet;
+			int rowNum;
 			if (workbook.getSheet(ruleSetName) != null) {
 				sheet = workbook.getSheet(ruleSetName);
+				rowNum = sheet.getLastRowNum() + 1;
 			} else {
 				sheet = workbook.createSheet(ruleSetName);
+				data.put("1", new Object[] { "ID", "URL", "NAME", "Lang", "TYPE", "TAGS", "CATEGORIES", "title",
+						"Descrition", "content", "crawl_date", "modified_date", "published_date", "text", "rules" });
+				rowNum = 2;
 			}
 
-			// This data needs to be written (Object[])
-			Map<String, Object[]> data = new TreeMap<String, Object[]>();
-			data.put("1", new Object[] { "ID", "URL", "NAME", "Lang", "TYPE", "TAGS", "CATEGORIES", "title",
-					"Descrition", "content", "crawl_date", "modified_date", "published_date", "text", "rules" });
+			// This data needs to be written (Object[]) 
 			for (Output output : outputs) {
-				data.put(output.getId(), new Object[] { output.getId(), output.getUrl(), output.getName(),
+				data.put(rowNum+ "", new Object[] { output.getId(), output.getUrl(), output.getName(),
 						output.getLang(), output.getLang(), output.getType(), output.getTags().toString(),
 						output.getCategories().toString(), output.getTitle(), output.getDescription(),
 						output.getContent(), output.getCrawl_date().toString(), output.getModified_date().toString(),
 						output.getPublished_date().toString(), output.getText(), output.getRules().toString() });
+				rowNum++;
 			}
 
 			// Iterate over data and write to sheet
