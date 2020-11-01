@@ -1,13 +1,13 @@
 function processAdd(cmd) {
  doc = cmd.solrDoc;
- var previousDoc=null;
-text=doc.getFieldValue("text").toString();
-updatedtext = text;
-rules=doc.getFieldValue("rules").toString();
-rulesArr = rules.split(",");
+ //var previousDoc=null;
+ text=doc.getFieldValue("text").toString();
+ updatedtext = text;
+ rules=doc.getFieldValue("rules").toString();
+ rulesArr = rules.split(",");
 for (i = 0; i < rulesArr.length; i++) {
   rule = rulesArr[i];
-  updatedtext.replace(rule, "<b>" + rule + "</b>" )
+  updatedtext = updatedtext.replace(rule, "<b>" + rule + "</b>" );
 }
 
  try{
